@@ -36,7 +36,7 @@ class UserController extends Controller
             if (Auth::attempt($credentials)) {
                 // $request->session()->regenerate();
 
-                return redirect()->route('deshbord')->with('success', 'Login successful');
+                return redirect()->route('dashboard')->with('success', 'Login successful');
 
             }else{
                 return back()->with('error', 'Login failed. Please check your credentials and try again.');
@@ -45,7 +45,7 @@ class UserController extends Controller
 
         public function deshboradPage(){
             // if(Auth::check()){
-                return view('deshbord');
+                return view('dashboard');
             // }else{
             //     return redirect()->route('login')->with('error', 'Please login to access the dashboard');
             // }
@@ -57,9 +57,16 @@ class UserController extends Controller
                 return view('added');
         }
 
+        
+        public function accountSetupView(){
+            return view('accountSetupView');
+        }
+
+        
         public function Logout(){
             Auth::logout();
             return redirect()->route('login')->with('success', 'You have been logged out');
         }
+
         
 }

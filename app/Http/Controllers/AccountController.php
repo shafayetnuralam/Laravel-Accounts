@@ -1,0 +1,170 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Account;
+use Illuminate\Http\Request;
+
+class AccountController extends Controller
+{
+    /**
+     * Handle DataTable AJAX requests for accounts list
+     */
+    public function getAccountsData(Request $request)
+    {
+        $query = Account::query();
+
+        // Handle search
+        if ($request->has('search') && !empty($request->search['value'])) {
+            $searchValue = $request->search['value'];
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('accounts_name', 'like', "%{$searchValue}%")
+                  ->orWhere('sector_name', 'like', "%{$searchValue}%")
+                  ->orWhere('mobile_no', 'like', "%{$searchValue}%")
+                  ->orWhere('credit_limit', 'like', "%{$searchValue}%")
+                  ->orWhere('category', 'like', "%{$searchValue}%")
+                  ->orWhere('opening_balance', 'like', "%{$searchValue}%")
+                  ->orWhere('LastUpdate', 'like', "%{$searchValue}%")
+                  ->orWhere('Status', 'like', "%{$searchValue}%");
+            });
+        }
+
+        // Get total records before filtering
+        $totalRecords = Account::count();
+        $filteredRecords = $query->count();
+
+        // Handle sorting
+        if ($request->has('order') && !empty($request->order)) {
+            $columns = [
+                0 => 'id', // SL column (not sortable)
+                1 => 'accounts_name',
+                2 => 'sector_name',
+                3 => 'mobile_no',
+                4 => 'credit_limit',
+                5 => 'category',
+                6 => 'opening_balance',
+                7 => 'CreateDate',
+                8 => 'Status',
+                9 => 'id' // Actions column (not sortable)
+            ];
+            
+            $columnIndex = $request->order[0]['column'];
+            $direction = $request->order[0]['dir'];
+            
+            if (isset($columns[$columnIndex]) && $columnIndex != 0 && $columnIndex != 9) {
+                $query->orderBy($columns[$columnIndex], $direction);
+            }
+        } else {
+            $query->orderBy('accounts_name', 'asc');
+        }
+
+        // Handle pagination
+        if ($request->length != -1) {
+            $query->skip($request->start)->take($request->length);
+        }
+
+        $accounts = $query->get();
+
+        // Format data for DataTable
+        $data = [];
+        $sn = $request->start + 1;
+        
+        foreach ($accounts as $account) {
+            $createDate = date("d/m/Y - h:i:s a", strtotime($account->CreateDate));
+            $statusBadge = $account->Status == 'Active' 
+                ? "<span class=\"badge badge-success\">Active</span>" 
+                : "<span class=\"badge badge-danger\">Inactive</span>";
+
+            $data[] = [
+                $sn++,
+                htmlspecialchars($account->accounts_name),
+                htmlspecialchars($account->sector_name),
+                htmlspecialchars($account->mobile_no),
+                htmlspecialchars($account->credit_limit),
+                htmlspecialchars($account->category),
+                htmlspecialchars($account->opening_balance),
+                "<details><summary>{$createDate}</summary><p>{$account->LastUpdate}</p></details>",
+                $statusBadge,
+                "<a href='#' class='btn btn-sm btn-info edit-btn' data-id='{$account->id}'>Edit</a>
+                 <a href='#' class='btn btn-sm btn-danger delete-btn' data-id='{$account->id}'>Delete</a>"
+            ];
+        }
+
+        return response()->json([
+            'draw' => intval($request->draw),
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new account
+     */
+    public function create()
+    {
+        return view('accounts.create');
+    }
+
+    /**
+     * Show the form for editing the specified account
+     */
+    public function edit($id)
+    {
+        $account = Account::findOrFail($id);
+        return view('accounts.edit', compact('account'));
+    }
+
+    /**
+     * Store a newly created account
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'accounts_name' => 'required|string|max:255',
+            'sector_name' => 'required|string|max:255',
+            'mobile_no' => 'required|string|max:20',
+            'credit_limit' => 'required|numeric',
+            'category' => 'required|string|max:255',
+            'opening_balance' => 'required|numeric',
+            'Status' => 'required|in:Active,Inactive',
+        ]);
+
+        Account::create($validated);
+
+        return redirect()->route('accounts.index')->with('success', 'Account created successfully');
+    }
+
+    /**
+     * Update the specified account
+     */
+    public function update(Request $request, $id)
+    {
+        $account = Account::findOrFail($id);
+
+        $validated = $request->validate([
+            'accounts_name' => 'required|string|max:255',
+            'sector_name' => 'required|string|max:255',
+            'mobile_no' => 'required|string|max:20',
+            'credit_limit' => 'required|numeric',
+            'category' => 'required|string|max:255',
+            'opening_balance' => 'required|numeric',
+            'Status' => 'required|in:Active,Inactive',
+        ]);
+
+        $account->update($validated);
+
+        return redirect()->route('accounts.index')->with('success', 'Account updated successfully');
+    }
+
+    /**
+     * Delete the specified account
+     */
+    public function destroy($id)
+    {
+        $account = Account::findOrFail($id);
+        $account->delete();
+
+        return redirect()->route('accounts.index')->with('success', 'Account deleted successfully');
+    }
+}

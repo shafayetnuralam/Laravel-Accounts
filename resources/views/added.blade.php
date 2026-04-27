@@ -20,7 +20,7 @@
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="Dashboard.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">Added Menu</li>
               </ol>
             </div><!-- /.col -->
@@ -46,10 +46,10 @@
                 <div class="clearfix hidden-md-up"></div>
 
                 <div class="col-md-3">
-                  <a href="Package.php" class="card card-primary">
+                  <a href="{{ route('accountSetupView') }}" class="card card-primary">
                     <div class="card-header">
                       <h3 class="card-title">
-                        <span class="material-icons">local_offer</span> Package View</h3>
+                        <span class="material-icons">local_offer</span> Account Setup View</h3>
 
                       <!-- /.card-tools -->
                     </div>
@@ -62,90 +62,6 @@
 
                 </div>
                 <!-- /.col -->
-        
-                
-                
-                <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
-                <div class="col-md-3">
-                  <a href="Owner.php" class="card card-primary">
-                    <div class="card-header">
-                      <h3 class="card-title">
-                        <span class="material-icons">local_offer</span> Owner View</h3>
-
-                      <!-- /.card-tools -->
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                      Total Active Owner 
-                    </div>
-                    <!-- /.card-body -->
-                  </a>
-
-                </div>
-                <!-- /.col -->
-
- 
-                
-                
-                <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
-                <div class="col-md-3">
-                  <a href="Shop.php" class="card card-primary">
-                    <div class="card-header">
-                      <h3 class="card-title">
-                        <span class="material-icons">local_offer</span> shop View</h3>
-
-                      <!-- /.card-tools -->
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                      Total Active shop 
-                    </div>
-                    <!-- /.card-body -->
-                  </a>
-
-                </div>
-                <!-- /.col -->
-
-                <!-- fix for small devices only -->
-                <div class="clearfix hidden-md-up"></div>
-                <div class="col-md-3">
-                  <a href="Medicine.php" class="card card-primary">
-                    <div class="card-header">
-                      <h3 class="card-title">
-                        <span class="material-icons">local_offer</span> Medicine View</h3>
-
-                      <!-- /.card-tools -->
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                      Total Active Medicine 
-                    </div>
-                    <!-- /.card-body -->
-                  </a>
-
-                </div>
-                <!-- /.col -->
-
-                <div class="col-md-3">
-                  <a href="Translation.php" class="card card-primary">
-                    <div class="card-header">
-                      <h3 class="card-title">
-                        <span class="material-icons">translate</span> Translation View</h3>
-
-                      <!-- /.card-tools -->
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                      Total Translation
-                    </div>
-                    <!-- /.card-body -->
-                  </a>
-
-                </div>
-                <!-- /.col -->
-       
                 
 
               </div>
