@@ -78,6 +78,28 @@
         </div>
       </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete the account "<strong id="deleteAccountName"></strong>"?</p>
+            <!-- <p class="text-danger">This action cannot be undone.</p> -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
 <!-- Custom JS -->
 <script src="Insert.js"></script>
 <script src="Update.js"></script>
@@ -157,7 +179,7 @@
           modal.find('.modal-title').text('Account Update');
           $.ajax({
           type: "GET",
-          url: "/accounts/" + ID + "/edit",
+          url: "{{ route('accounts.edit', ':id') }}".replace(':id', ID),
           cache: false,
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -175,6 +197,72 @@
         }
 
       });
+
+  // Handle edit button clicks
+  $(document).on('click', '.edit-btn', function() {
+    var accountId = $(this).data('id');
+    $('#modal-default1').modal('show');
+    $('#modal-default1 .modal-title').text('Account Update');
+    $('#modal-default1 .dash').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</div>');
+
+    $.ajax({
+      type: "GET",
+      url: "{{ route('accounts.edit', ':id') }}".replace(':id', accountId),
+      cache: false,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (data) {
+        $('#modal-default1 .dash').html(data);
+      },
+      error: function (err) {
+        console.log(err);
+        toastr.error('Failed to load account data');
+        $('#modal-default1 .dash').html('<div class="alert alert-danger">Failed to load account data</div>');
+      }
+    });
+  });
+
+  // Handle delete button clicks
+  $(document).on('click', '.delete-btn', function() {
+    var accountId = $(this).data('id');
+    var accountName = $(this).closest('tr').find('td:nth-child(2)').text();
+
+    // Set the account name in the modal
+    $('#deleteAccountName').text(accountName);
+    // Store the account ID for later use
+    $('#confirmDelete').data('id', accountId);
+    // Show the delete confirmation modal
+    $('#deleteModal').modal('show');
+  });
+
+  // Handle confirm delete button click
+  $('#confirmDelete').on('click', function() {
+    var accountId = $(this).data('id');
+
+    // Hide the modal
+    $('#deleteModal').modal('hide');
+
+    // Perform the delete request
+    $.ajax({
+      type: "DELETE",
+      url: "{{ route('accounts.destroy', ':id') }}".replace(':id', accountId),
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function (response) {
+        toastr.success('Account deleted successfully!');
+        $('#accountsView').DataTable().ajax.reload();
+      },
+      error: function (xhr) {
+        let errorMessage = 'Failed to delete account';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        toastr.error(errorMessage);
+      }
+    });
+  });
 
     </script>
 

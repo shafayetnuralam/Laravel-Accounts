@@ -18,12 +18,9 @@ class ValidUser
     {
         // echo "This is a valid user middleware. Required role: " . $role . "<br>";
 
-        //  if(Auth::check()  && Auth::user()->role === $role){
-        //          return $next($request);
-        //     }else{
-        //         return redirect()->route('login')->with('error', 'Please login to access the Software');
-        //     }
-            
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please login to access the Software');
+        }
         
          if(Auth::user()->role == $role){
                  return $next($request);

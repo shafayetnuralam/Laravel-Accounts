@@ -71,6 +71,7 @@ Route::get('accountSetupView',[UserController:: class,'accountSetupView'])
 // Account Routes
 Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     Route::post('accounts/data', [AccountController::class, 'getAccountsData'])->name('accounts.data');
+    Route::post('accounts/check-duplicate', [AccountController::class, 'checkDuplicate'])->name('accounts.check-duplicate');
     Route::get('accounts/create', [AccountController::class, 'create'])->name('accounts.create');
     Route::get('accounts/{id}/edit', [AccountController::class, 'edit'])->name('accounts.edit');
     Route::post('accounts', [AccountController::class, 'store'])->name('accounts.store');

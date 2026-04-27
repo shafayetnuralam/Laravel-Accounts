@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
@@ -103,7 +104,7 @@ class AccountController extends Controller
      */
     public function create()
     {
-        return view('accounts.create');
+        return view('modalAccountsInsert');
     }
 
     /**
@@ -112,7 +113,7 @@ class AccountController extends Controller
     public function edit($id)
     {
         $account = Account::findOrFail($id);
-        return view('accounts.edit', compact('account'));
+        return view('modalAccountsUpdate', compact('account'));
     }
 
     /**
@@ -121,18 +122,30 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'accounts_name' => 'required|string|max:255',
+            'accounts_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('accounts_setup')->where(function ($query) use ($request) {
+                    return $query->where('sector_name', $request->sector_name);
+                })
+            ],
             'sector_name' => 'required|string|max:255',
             'mobile_no' => 'required|string|max:20',
-            'credit_limit' => 'required|numeric',
+            'credit_limit' => 'required|numeric|min:0',
             'category' => 'required|string|max:255',
             'opening_balance' => 'required|numeric',
             'Status' => 'required|in:Active,Inactive',
+        ], [
+            'accounts_name.unique' => 'An account with this name already exists in the selected sector.'
         ]);
 
         Account::create($validated);
 
-        return redirect()->route('accounts.index')->with('success', 'Account created successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Account created successfully'
+        ]);
     }
 
     /**
@@ -143,28 +156,58 @@ class AccountController extends Controller
         $account = Account::findOrFail($id);
 
         $validated = $request->validate([
-            'accounts_name' => 'required|string|max:255',
+            'accounts_name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('accounts_setup')->where(function ($query) use ($request) {
+                    return $query->where('sector_name', $request->sector_name);
+                })->ignore($id)
+            ],
             'sector_name' => 'required|string|max:255',
             'mobile_no' => 'required|string|max:20',
-            'credit_limit' => 'required|numeric',
+            'credit_limit' => 'required|numeric|min:0',
             'category' => 'required|string|max:255',
             'opening_balance' => 'required|numeric',
             'Status' => 'required|in:Active,Inactive',
+        ], [
+            'accounts_name.unique' => 'An account with this name already exists in the selected sector.'
         ]);
 
         $account->update($validated);
 
-        return redirect()->route('accounts.index')->with('success', 'Account updated successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Account updated successfully'
+        ]);
     }
 
     /**
-     * Delete the specified account
+     * Check for duplicate account name + sector name combination
+     */
+    public function checkDuplicate(Request $request)
+    {
+        $exists = Account::where('accounts_name', $request->accounts_name)
+                        ->where('sector_name', $request->sector_name)
+                        ->when($request->has('exclude_id'), function ($query) use ($request) {
+                            return $query->where('id', '!=', $request->exclude_id);
+                        })
+                        ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    /**
+     * Remove the specified account
      */
     public function destroy($id)
     {
         $account = Account::findOrFail($id);
         $account->delete();
 
-        return redirect()->route('accounts.index')->with('success', 'Account deleted successfully');
+        return response()->json([
+            'success' => true,
+            'message' => 'Account deleted successfully'
+        ]);
     }
 }
