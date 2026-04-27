@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\TestUser;
+use App\Http\Middleware\ValidUser;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,6 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         //
+        $middleware->alias([
+            'LsValidUser' => ValidUser::class,
+        ]);
+
+        $middleware->appendToGroup('ok-user',[
+            ValidUser::class,
+            TestUser::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

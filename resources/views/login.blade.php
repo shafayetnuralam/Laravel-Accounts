@@ -123,6 +123,18 @@ span.psw {
      width: 100%;
   }
 }
+
+/* Login Notification */
+.message {
+  padding: 20px;
+  background-color: #cf5046;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.message.alert-success {
+  background-color: #88e78b;
+}
 </style>
 </head>
 <body>
@@ -154,18 +166,18 @@ span.psw {
 
         <!-- Login Notification -->
         @if (session('error'))
-            <div class="alert alert-danger">
+            <div class="message alert-danger">
                 {{ session('error') }}
             </div>
         @endif
         @if (session('success'))
-            <div class="alert alert-success">
+            <div class="message alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
     <div class="container" style="background-color:#f1f1f1">
-      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+    <button onclick="window.location.href='/register'" class="cancelbtn">Register</button>
       <!-- <span class="psw">Forgot <a href="#">password?</a></span> -->
     </div>
   </form>

@@ -44,23 +44,20 @@ class UserController extends Controller
         }
 
         public function deshboradPage(){
-            if(Auth::check()){
+            // if(Auth::check()){
                 return view('deshbord');
-            }else{
-                return redirect()->route('login')->with('error', 'Please login to access the dashboard');
-            }
+            // }else{
+            //     return redirect()->route('login')->with('error', 'Please login to access the dashboard');
+            // }
         }
 
 
-                public function addedPage(){
-            if(Auth::check()){
+        public function addedPage(){
+    
                 return view('added');
-            }else{
-                return redirect()->route('login')->with('error', 'Please login to access the dashboard');
-            }
         }
 
-                public function Logout(){
+        public function Logout(){
             Auth::logout();
             return redirect()->route('login')->with('success', 'You have been logged out');
         }

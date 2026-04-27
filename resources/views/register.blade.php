@@ -116,6 +116,7 @@ hr {
 <h2>Modal Signup Form</h2>
 
 <button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign Up</button>
+<button onclick="window.location.href='/login'" style="width:auto;">Login</button>
 
 <div id="id01" class="modal">
   <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
