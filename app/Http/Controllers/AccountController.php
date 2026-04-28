@@ -9,6 +9,15 @@ use Illuminate\Validation\Rule;
 class AccountController extends Controller
 {
     /**
+     * Display a listing of accounts (JSON for AJAX)
+     */
+    public function index()
+    {
+        $accounts = Account::select('id', 'accounts_name', 'sector_name')->orderBy('accounts_name', 'ASC')->get();
+        return response()->json($accounts);
+    }
+
+    /**
      * Handle DataTable AJAX requests for accounts list
      */
     public function getAccountsData(Request $request)

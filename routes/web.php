@@ -76,6 +76,7 @@ Route::get('receiveView',[UserController:: class,'receiveView'])
 
 // Account Routes
 Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
     Route::post('accounts/data', [AccountController::class, 'getAccountsData'])->name('accounts.data');
     Route::post('accounts/check-duplicate', [AccountController::class, 'checkDuplicate'])->name('accounts.check-duplicate');
     Route::get('accounts/create', [AccountController::class, 'create'])->name('accounts.create');
@@ -87,7 +88,13 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
 
 Route::middleware(['auth','LsValidUser:admin'])->group(function () {
     Route::post('receives/data', [ReceiveController::class, 'getReceivesData'])->name('receives.data');
-    // Other receive routes can be added here
+    Route::post('receives/check-duplicate', [ReceiveController::class, 'checkDuplicate'])->name('receives.check-duplicate');
+    Route::get('receives/create', [ReceiveController::class, 'create'])->name('receives.create');
+    Route::get('receives/{id}/edit', [ReceiveController::class, 'edit'])->name('receives.edit');
+    Route::post('receives', [ReceiveController::class, 'store'])->name('receives.store');
+    Route::put('receives/{id}', [ReceiveController::class, 'update'])->name('receives.update');
+    Route::delete('receives/{id}', [ReceiveController::class, 'destroy'])->name('receives.destroy');
+        Route::get('receives/last-invoice', [ReceiveController::class, 'getLastInvoice'])->name('receives.getLastInvoice');
 });
 
 Route::get('logout',[UserController:: class,'Logout'])->name('logout'); // logout page

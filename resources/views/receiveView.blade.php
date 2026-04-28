@@ -90,7 +90,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>Are you sure you want to delete the Receive "<strong id="deleteAccountName"></strong>"?</p>
+            <p>Are you sure you want to delete the Receive "<strong id="deleteReceiveName"></strong>"?</p>
             <!-- <p class="text-danger">This action cannot be undone.</p> -->
           </div>
           <div class="modal-footer">
@@ -143,7 +143,8 @@
     }]
   });
 
-  //Account Add
+  
+  //Receive Add
       $('#modal-default1').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var ID = button.data('whatever') // Extract info from data-* attributes
@@ -151,13 +152,13 @@
         var dataString = 'id=' + ID;
         modal.find('.dash').html('');
 
-        if(ID =='Account'){
+        if(ID =='Receive'){
 
-          modal.find('.modal-title').text('Account Add');
+          modal.find('.modal-title').text('Receive Add');
        
         $.ajax({
           type: "GET",
-          url: "{{ route('accounts.create') }}",
+          url: "{{ route('receives.create') }}",
           cache: false,
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -165,18 +166,33 @@
           success: function (data) {
             console.log(data);
             modal.find('.dash').html(data);
+            
+            // Fetch last invoice number for new receives
+            $.ajax({
+              url: "{{ route('receives.getLastInvoice') }}",
+              type: 'GET',
+              headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+              },
+              success: function(response) {
+                $('#invoice_no').val(response.last_invoice_no);
+              },
+              error: function(xhr) {
+                console.error('Error fetching last invoice number:', xhr);
+              }
+            });
           },
           error: function (err) {
             console.log(err);
           }
         });
 
-      }else if (ID !='Account'){
+      }else if (ID !='Receive'){
 
-          modal.find('.modal-title').text('Account Update');
+          modal.find('.modal-title').text('Receive Update');
           $.ajax({
           type: "GET",
-          url: "{{ route('accounts.edit', ':id') }}".replace(':id', ID),
+          url: "{{ route('receives.edit', ':id') }}".replace(':id', ID),
           cache: false,
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -194,72 +210,6 @@
         }
 
       });
-
-  // Handle edit button clicks
-  $(document).on('click', '.edit-btn', function() {
-    var accountId = $(this).data('id');
-    $('#modal-default1').modal('show');
-    $('#modal-default1 .modal-title').text('Account Update');
-    $('#modal-default1 .dash').html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</div>');
-
-    $.ajax({
-      type: "GET",
-      url: "{{ route('accounts.edit', ':id') }}".replace(':id', accountId),
-      cache: false,
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      success: function (data) {
-        $('#modal-default1 .dash').html(data);
-      },
-      error: function (err) {
-        console.log(err);
-        toastr.error('Failed to load account data');
-        $('#modal-default1 .dash').html('<div class="alert alert-danger">Failed to load account data</div>');
-      }
-    });
-  });
-
-  // Handle delete button clicks
-  $(document).on('click', '.delete-btn', function() {
-    var accountId = $(this).data('id');
-    var accountName = $(this).closest('tr').find('td:nth-child(2)').text();
-
-    // Set the account name in the modal
-    $('#deleteAccountName').text(accountName);
-    // Store the account ID for later use
-    $('#confirmDelete').data('id', accountId);
-    // Show the delete confirmation modal
-    $('#deleteModal').modal('show');
-  });
-
-  // Handle confirm delete button click
-  $('#confirmDelete').on('click', function() {
-    var accountId = $(this).data('id');
-
-    // Hide the modal
-    $('#deleteModal').modal('hide');
-
-    // Perform the delete request
-    $.ajax({
-      type: "DELETE",
-      url: "{{ route('accounts.destroy', ':id') }}".replace(':id', accountId),
-      headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      },
-      success: function (response) {
-        toastr.success('Account deleted successfully!');
-        $('#accountsView').DataTable().ajax.reload();
-      },
-      error: function (xhr) {
-        let errorMessage = 'Failed to delete account';
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMessage = xhr.responseJSON.message;
-        }
-        toastr.error(errorMessage);
-      }
-    });
-  });
 
     </script>
 

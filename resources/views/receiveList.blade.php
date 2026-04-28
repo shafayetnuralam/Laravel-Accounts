@@ -26,6 +26,7 @@
                 <th>Amount</th>
                 <th>Remarks</th>
                 <th>Actions</th>
+
             </tr>
         </tfoot>
 </table>      

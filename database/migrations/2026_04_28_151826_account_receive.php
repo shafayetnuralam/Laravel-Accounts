@@ -14,7 +14,7 @@ return new class extends Migration
         //
             Schema::create('account_receive', function (Blueprint $table) {
             $table->id();
-            $table->integer('accounts_id');
+           $table->foreignId('accounts_id');
             $table->string('pay_mode');
             $table->decimal('amount', 10, 2);
             $table->date('entry_date');
