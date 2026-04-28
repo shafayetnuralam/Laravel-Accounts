@@ -17,16 +17,16 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0"> Account Setup View</h1>
+              <h1 class="m-0"> Receive View</h1>
 
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><button class="btn btn-success" data-toggle="modal" data-target="#modal-default1" data-backdrop='static' data-keyboard='false'
-                  data-whatever="Account">Add New</button></li>
+                  data-whatever="Receive">Add New</button></li>
                   <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                   <li class="breadcrumb-item"><a href="{{ route('added') }}">Added Menu</a></li>
-                  <li class="breadcrumb-item active">Account Setup View</li>
+                  <li class="breadcrumb-item active">Receive View</li>
               </ol>
             </div><!-- /.col -->
           </div><!-- /.row -->
@@ -44,7 +44,7 @@
               <!-- /.card-header -->
               <div class="card-body">
             
-                @include('accountsList')
+                @include('ReceiveList')
                
               </div>
               <!-- /.card-body -->
@@ -64,7 +64,7 @@
 
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title"> Account Add </h4>
+            <h4 class="modal-title"> Receive Add </h4>
 
           </div>
           <div class="modal-body">
@@ -90,7 +90,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>Are you sure you want to delete the account "<strong id="deleteAccountName"></strong>"?</p>
+            <p>Are you sure you want to delete the Receive "<strong id="deleteAccountName"></strong>"?</p>
             <!-- <p class="text-danger">This action cannot be undone.</p> -->
           </div>
           <div class="modal-footer">
@@ -100,6 +100,7 @@
         </div>
       </div>
     </div>
+
 
   <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark">
@@ -120,7 +121,7 @@
   </div>
 </body>
 <script>
-  $('#accountsView').DataTable({
+  $('#receiveView').DataTable({
     "fnCreatedRow": function(nRow, aData, iDataIndex) {
       $(nRow).attr('id', aData[0]);
     },
@@ -130,7 +131,7 @@
     'paging': true,
     'order': [],
     'ajax': {
-      'url': "{{ route('accounts.data') }}",
+      'url': "{{ route('receives.data') }}",
       'type': 'post',
       'headers': {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -138,7 +139,7 @@
     },
     "aoColumnDefs": [{
         "bSortable": false,
-        "aTargets": [0, 9]
+        "aTargets": [0, 8]
     }]
   });
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReceiveController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TestUser;
 use Illuminate\Support\Facades\Route;
@@ -57,6 +58,11 @@ Route::get('accountSetupView',[UserController:: class,'accountSetupView'])
 ->name('accountSetupView')
 ->middleware(["auth",'LsValidUser:admin']); // dashboard page with middleware
 
+// receiveView 
+Route::get('receiveView',[UserController:: class,'receiveView'])
+->name('receiveView')
+->middleware(["auth",'LsValidUser:admin']); // receive view page with middleware
+
 // Route::middleware(['ok-user'])->group(function () {
 //     Route::get('dashboard',[UserController:: class,'deshboradPage'])
 //     ->name('dashboard'); // dashboard page with middleware
@@ -77,6 +83,11 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     Route::post('accounts', [AccountController::class, 'store'])->name('accounts.store');
     Route::put('accounts/{id}', [AccountController::class, 'update'])->name('accounts.update');
     Route::delete('accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
+});
+
+Route::middleware(['auth','LsValidUser:admin'])->group(function () {
+    Route::post('receives/data', [ReceiveController::class, 'getReceivesData'])->name('receives.data');
+    // Other receive routes can be added here
 });
 
 Route::get('logout',[UserController:: class,'Logout'])->name('logout'); // logout page

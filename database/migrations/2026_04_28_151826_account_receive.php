@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts_setup', function (Blueprint $table) {
+        //
+            Schema::create('account_receive', function (Blueprint $table) {
             $table->id();
-            $table->string('accounts_name');
-            $table->string('sector_name');
-            $table->string('mobile_no');
-            $table->decimal('credit_limit', 10, 2);
-            $table->string('category');
-            $table->decimal('opening_balance', 10, 2);
+            $table->integer('accounts_id');
+            $table->string('pay_mode');
+            $table->decimal('amount', 10, 2);
+            $table->date('entry_date');
+            $table->integer('invoice_no')->unique();
+            $table->longText('remarks')->nullable();
             $table->timestamp('CreateDate')->useCurrent();
             $table->timestamp('LastUpdate')->useCurrent()->useCurrentOnUpdate();
-            $table->enum('Status', ['Active', 'Inactive'])->default('Active');
         });
-        
+
     }
 
     /**
@@ -31,6 +31,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts_setup');
+        //
+        Schema::dropIfExists('account_receive');
+
     }
 };
