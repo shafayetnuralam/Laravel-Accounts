@@ -54,20 +54,10 @@ Route::get('added',[UserController:: class,'addedPage'])
 ->middleware(["auth",'LsValidUser:admin']); // dashboard page with middleware
 
 
-// added page 
-Route::get('accountSetupView',[UserController:: class,'accountSetupView'])
-->name('accountSetupView')
-->middleware(["auth",'LsValidUser:admin']); // dashboard page with middleware
-
-// receiveView 
-Route::get('receiveView',[UserController:: class,'receiveView'])
-->name('receiveView')
-->middleware(["auth",'LsValidUser:admin']); // receive view page with middleware
-
 // paymentView
-Route::get('paymentView',[UserController:: class,'paymentView'])
-->name('paymentView')
-->middleware(["auth",'LsValidUser:admin']); // payment view page with middleware
+// Route::get('paymentView',[UserController:: class,'paymentView'])
+// ->name('paymentView')
+// ->middleware(["auth",'LsValidUser:admin']); // payment view page with middleware
 
 // Route::middleware(['ok-user'])->group(function () {
 //     Route::get('dashboard',[UserController:: class,'deshboradPage'])
@@ -78,10 +68,10 @@ Route::get('paymentView',[UserController:: class,'paymentView'])
 // });
 
 
-
-
 // Account Routes
 Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
+    // Account routes
+    Route::get('accountSetupView', [UserController::class, 'accountSetupView'])->name('accountSetupView');
     Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
     Route::post('accounts/data', [AccountController::class, 'getAccountsData'])->name('accounts.data');
     Route::post('accounts/check-duplicate', [AccountController::class, 'checkDuplicate'])->name('accounts.check-duplicate');
@@ -90,9 +80,9 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     Route::post('accounts', [AccountController::class, 'store'])->name('accounts.store');
     Route::put('accounts/{id}', [AccountController::class, 'update'])->name('accounts.update');
     Route::delete('accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
-});
 
-Route::middleware(['auth','LsValidUser:admin'])->group(function () {
+    // Receive routes
+    Route::get('receiveView', [UserController::class, 'receiveView'])->name('receiveView');
     Route::post('receives/data', [ReceiveController::class, 'getReceivesData'])->name('receives.data');
     Route::post('receives/check-duplicate', [ReceiveController::class, 'checkDuplicate'])->name('receives.check-duplicate');
     Route::get('receives/create', [ReceiveController::class, 'create'])->name('receives.create');
@@ -102,9 +92,8 @@ Route::middleware(['auth','LsValidUser:admin'])->group(function () {
     Route::delete('receives/{id}', [ReceiveController::class, 'destroy'])->name('receives.destroy');
     Route::get('receives/last-invoice', [ReceiveController::class, 'getLastInvoice'])->name('receives.getLastInvoice');
 
-});
-
-Route::middleware(['auth','LsValidUser:admin'])->group(function () {
+    // Payment routes
+    Route::get('paymentView', [UserController::class, 'paymentView'])->name('paymentView');
     Route::post('payments/data', [PaymentController::class, 'getPaymentsData'])->name('payments.data');
     Route::post('payments/check-duplicate', [PaymentController::class, 'checkDuplicate'])->name('payments.check-duplicate');
     Route::get('payments/create', [PaymentController::class, 'create'])->name('payments.create');
@@ -115,5 +104,6 @@ Route::middleware(['auth','LsValidUser:admin'])->group(function () {
     Route::get('payments/last-invoice', [PaymentController::class, 'getLastInvoice'])->name('payments.getLastInvoice');
 
 });
+
 
 Route::get('logout',[UserController:: class,'Logout'])->name('logout'); // logout page
