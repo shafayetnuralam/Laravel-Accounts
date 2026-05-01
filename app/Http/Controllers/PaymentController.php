@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Receive;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-class ReceiveController extends Controller
+class PaymentController extends Controller
 {
     //
-     public function getReceivesData(Request $request)
+
+    //
+     public function getPaymentsData(Request $request)
     {
-        $query = Receive::query();
-        $query->leftJoin('accounts_setup', 'account_receive.accounts_id', '=', 'accounts_setup.id')
-              ->select('account_receive.*', 'accounts_setup.accounts_name', 'accounts_setup.sector_name', 'accounts_setup.mobile_no', 'accounts_setup.category', 'accounts_setup.opening_balance');
+        $query = Payment::query();
+        $query->leftJoin('accounts_setup', 'account_payment.accounts_id', '=', 'accounts_setup.id')
+              ->select('account_payment.*', 'accounts_setup.accounts_name', 'accounts_setup.sector_name', 'accounts_setup.mobile_no', 'accounts_setup.category', 'accounts_setup.opening_balance');
 
         // Handle search
         if ($request->has('search') && !empty($request->search['value'])) {
@@ -28,7 +29,7 @@ class ReceiveController extends Controller
         }
 
         // Get total records before filtering
-        $totalRecords = Receive::count();
+        $totalRecords = Payment::count();
         $filteredRecords = $query->count();
 
         // Handle sorting
@@ -60,20 +61,20 @@ class ReceiveController extends Controller
         }
         // Limit coluums
          $query->limit(100);
-        $receives = $query->get();
+        $payments = $query->get();
 
         // Format data for DataTable
         $data = [];
         $sn = $request->start + 1;
         
-        foreach ($receives as $receive) {
-            $entryTime = date("h:i:s a", strtotime($receive->CreateDate));
-            $entryDate = date("d/m/Y", strtotime($receive->entry_date));
-            $accountsInfo =  "<span class=\"badge badge-warning\">{$receive->accounts_name}</span> <span class=\"badge badge-success\">{$receive->sector_name}</span> <span class=\"badge badge-info\">{$receive->mobile_no}</span>";
+        foreach ($payments as $payment) {
+            $entryTime = date("h:i:s a", strtotime($payment->CreateDate));
+            $entryDate = date("d/m/Y", strtotime($payment->entry_date));
+            $accountsInfo =  "<span class=\"badge badge-warning\">{$payment->accounts_name}</span> <span class=\"badge badge-success\">{$payment->sector_name}</span> <span class=\"badge badge-info\">{$payment->mobile_no}</span>";
 
-            $remarksSort = Str::words($receive->remarks, 10, '...');
+            $remarksSort = Str::words($payment->remarks, 10, '...');
             // continue after remarksSort words, if there are more words then show ... at the end of the string
-            $remarksDetails = $receive->remarks;
+            $remarksDetails = $payment->remarks;
 
             $remarks = "<details>
                         <summary>{$remarksSort}</summary>
@@ -82,16 +83,16 @@ class ReceiveController extends Controller
 
             $data[] = [
                 $sn++,
-                htmlspecialchars($receive->invoice_no),
+                htmlspecialchars($payment->invoice_no),
                 htmlspecialchars($entryDate),
                 htmlspecialchars($entryTime),
                 ($accountsInfo),
-                htmlspecialchars($receive->pay_mode),
-                htmlspecialchars($receive->amount),
+                htmlspecialchars($payment->pay_mode),
+                htmlspecialchars($payment->amount),
                 $remarks,
               
-                "<a href='#' class='btn btn-sm btn-info edit-btn' data-id='{$receive->id}'>Edit</a>
-                 <a href='#' class='btn btn-sm btn-danger delete-btn' data-id='{$receive->id}'>Delete</a>"
+                "<a href='#' class='btn btn-sm btn-info edit-btn' data-id='{$payment->id}'>Edit</a>
+                 <a href='#' class='btn btn-sm btn-danger delete-btn' data-id='{$payment->id}'>Delete</a>"
             ];
         }
 
@@ -109,31 +110,31 @@ class ReceiveController extends Controller
      */
     public function checkDuplicate(Request $request)
     {
-        $exists = Receive::where('invoice_no', $request->invoice_no)
-                        ->when($request->has('receive_id') && $request->receive_id, function ($query) use ($request) {
-                            return $query->where('id', '!=', $request->receive_id);
+        $exists = Payment::where('invoice_no', $request->invoice_no)
+                        ->when($request->has('payment_id') && $request->payment_id, function ($query) use ($request) {
+                            return $query->where('id', '!=', $request->payment_id);
                         })
                         ->exists();
 
         return response()->json([
             'exists' => $exists,
             'invoice_no' => $request->invoice_no,
-            'message' => $exists ? 'A receive with this invoice number already exists.' : 'Invoice number is unique.'
+            'message' => $exists ? 'A payment with this invoice number already exists.' : 'Invoice number is unique.'
         ]);
     }
-    
 
-     /**
-     * Show the form for creating a new Receive
+      /**
+     * Show the form for creating a new Payment
      */
     public function create()
     {
-        return view('modalReceivesInsert');
+        return view('modalPaymentsInsert');
     }
+
 
     
     /**
-     * Store a newly created receive
+     * Store a newly created payment
      */
     public function store(Request $request)
     {
@@ -142,65 +143,65 @@ class ReceiveController extends Controller
             'pay_mode' => 'required|string|in:Cash,Bank,Cheque,Online',
             'amount' => 'required|numeric|min:0.01',
             'entry_date' => 'required|date',
-            'invoice_no' => 'nullable|unique:account_receive,invoice_no|string|max:255',
+            'invoice_no' => 'nullable|unique:account_payment,invoice_no|string|max:255',
             'remarks' => 'nullable|string',
         ], [
             'invoice_no.unique' => 'This invoice number is already used. Please enter a different one.'
         ]);
 
-        Receive::create($validated);
+        Payment::create($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Receive created successfully'
+            'message' => 'Payment created successfully'
         ]);
     }
 
 
     /**
-     * Show the form for editing the specified Receive
+     * Show the form for editing the specified Payment
      */
     public function edit($id)
     {
-        $receive = Receive::findOrFail($id);
-        // return view('modalReceivesUpdate', $id);
-        return view('modalReceivesUpdate', compact('receive')); // view file name should be modalReceivesUpdate.blade.php
+        $payment = Payment::findOrFail($id);
+        return view('modalPaymentsUpdate', compact('payment')); // view file name should be modalPaymentsUpdate.blade.php
     }
 
-    
     /**
-     * Update the specified receive
+     * Update the specified payment
      */
     public function update(Request $request, $id)
     {
-        $receive = Receive::findOrFail($id);
+        $payment = Payment::findOrFail($id);
 
         $validated = $request->validate([
             'accounts_id' => 'required|exists:accounts_setup,id',
             'pay_mode' => 'required|string|in:Cash,Bank,Cheque,Online',
             'amount' => 'required|numeric|min:0.01',
             'entry_date' => 'required|date',
-            'invoice_no' => 'nullable|unique:account_receive,invoice_no,' . $id . '|string|max:255',
+            'invoice_no' => 'nullable|unique:account_payment,invoice_no,' . $id . '|string|max:255',
             'remarks' => 'nullable|string',
 
         ], [
             'invoice_no.unique' => 'This invoice number is already used. Please enter a different one.'
         ]);
 
-        $receive->update($validated);
+        $payment->update($validated);
 
         return response()->json([
             'success' => true,
-            'message' => 'Receive updated successfully'
+            'message' => 'Payment updated successfully'
         ]);
     }
 
 
+    
+
     // Get Last invoice Use for auto generate invoice number
     public function getLastInvoice()
     {
-        $lastReceive = Receive::orderBy('id', 'desc')->first();
-        $lastInvoiceNo = $lastReceive ? $lastReceive->invoice_no : 0;
+        $lastPayment = Payment::orderBy('id', 'desc')->first();
+        $lastInvoiceNo = $lastPayment ? $lastPayment->invoice_no : 0;
         $nextInvoiceNo = $lastInvoiceNo ? $lastInvoiceNo + 1 : 1;
         return response()->json([
             'last_invoice_no' => $nextInvoiceNo
@@ -210,12 +211,14 @@ class ReceiveController extends Controller
 
         public function destroy($id)
     {
-        $receive = Receive::findOrFail($id);
-        $receive->delete();
+        $payment = Payment::findOrFail($id);
+        $payment->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Receive deleted successfully'
+            'message' => 'Payment deleted successfully'
         ]);
     }
+
+
 }

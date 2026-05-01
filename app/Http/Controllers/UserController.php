@@ -67,6 +67,11 @@ class UserController extends Controller
             return view('receiveView');
         }
 
+        public function paymentView(){
+            return view('paymentView');
+        }
+
+        
         public function Logout(){
             Auth::logout();
             return redirect()->route('login')->with('success', 'You have been logged out');

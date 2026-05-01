@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReceiveController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TestUser;
@@ -95,11 +96,23 @@ Route::middleware(['auth','LsValidUser:admin'])->group(function () {
     Route::post('receives/data', [ReceiveController::class, 'getReceivesData'])->name('receives.data');
     Route::post('receives/check-duplicate', [ReceiveController::class, 'checkDuplicate'])->name('receives.check-duplicate');
     Route::get('receives/create', [ReceiveController::class, 'create'])->name('receives.create');
-    Route::get('receives/{id}/edit', [ReceiveController::class, 'edit'])->name('receives.edit');
     Route::post('receives', [ReceiveController::class, 'store'])->name('receives.store');
+    Route::get('receives/{id}/edit', [ReceiveController::class, 'edit'])->name('receives.edit');
     Route::put('receives/{id}', [ReceiveController::class, 'update'])->name('receives.update');
     Route::delete('receives/{id}', [ReceiveController::class, 'destroy'])->name('receives.destroy');
     Route::get('receives/last-invoice', [ReceiveController::class, 'getLastInvoice'])->name('receives.getLastInvoice');
+
+});
+
+Route::middleware(['auth','LsValidUser:admin'])->group(function () {
+    Route::post('payments/data', [PaymentController::class, 'getPaymentsData'])->name('payments.data');
+    Route::post('payments/check-duplicate', [PaymentController::class, 'checkDuplicate'])->name('payments.check-duplicate');
+    Route::get('payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('payments/{id}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+    Route::put('payments/{id}', [PaymentController::class, 'update'])->name('payments.update');
+    Route::delete('payments/{id}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+    Route::get('payments/last-invoice', [PaymentController::class, 'getLastInvoice'])->name('payments.getLastInvoice');
 
 });
 
