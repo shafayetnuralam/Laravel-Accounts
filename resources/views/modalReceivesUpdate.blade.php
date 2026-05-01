@@ -1,14 +1,25 @@
-{{-- Receive Insert Modal --}}
+{{-- Receive Update Modal --}}
+@php
+    $receive = isset($receive) ? $receive : null;
+    $isUpdate = $receive !== null;
+@endphp
+
+{{-- Receive Update Modal --}}
 <div class="card-body">
-  <form id="receiveInsertForm">
-    @csrf
+  <form id="receiveUpdateForm">
+ @csrf
+    @if($isUpdate)
+    @method('PUT')
+    @endif
+    <input type="hidden" id="receive_id" name="receive_id" value="{{ $receive ? $receive->id : '' }}">
     <div class="row">
      
     <div class="col-md-6">
       <div class="form-group">
         <label class="col-form-label" for="accounts_id">Account Info</label>
-        <select name="accounts_id" id="accounts_id" class="form-control select2" required>
+        <select name="accounts_id" id="accounts_id" class="form-control select2" required 
           <option value="">Select Account info</option>
+
           <!-- Accounts will be loaded via AJAX -->
         </select>
         <div class="invalid-feedback">
@@ -38,8 +49,8 @@
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-form-label" for="amount">Amount</label>
-          <input type="text" class="form-control" id="amount" name="amount"
-                 placeholder="Enter Amount" required>
+          <input type="number" class="form-control" id="amount" name="amount" value="{{ $receive ? $receive->amount : '' }}"
+                 placeholder="Enter Amount" step="0.01" min="0" required>
           <div class="invalid-feedback">
             Amount must be a positive number.
           </div>
@@ -49,7 +60,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-form-label" for="entry_date">Entry Date</label>
-          <input type="date" class="form-control" id="entry_date" name="entry_date" value="{{ date('Y-m-d') }}" required>
+          <input type="date" class="form-control" id="entry_date" name="entry_date" value="{{ $receive ? $receive->entry_date : date('Y-m-d') }}" required>
           <div class="invalid-feedback">
             Entry date is required.
           </div>
@@ -62,7 +73,7 @@
         <div class="form-group">
           <label class="col-form-label" for="invoice_no">Invoice No</label>
           <input type="text" class="form-control" id="invoice_no" name="invoice_no"
-                 placeholder="Enter Invoice Number">
+                 placeholder="Enter Invoice Number" value="{{ $receive ? $receive->invoice_no : '' }}">
         </div>
       </div>
 
@@ -73,7 +84,7 @@
         <div class="form-group">
           <label class="col-form-label" for="remarks">Remarks</label>
           <textarea class="form-control" id="remarks" name="remarks" rows="3"
-                    placeholder="Enter Remarks"></textarea>
+                    placeholder="Enter Remarks">{{ $receive ? $receive->remarks : '' }}</textarea>
         </div>
       </div>
     </div>
@@ -89,6 +100,7 @@
 
 <script>
 $(document).ready(function() {
+  const isUpdate = {{ $isUpdate ? 'true' : 'false' }};
   // Initialize Select2
   $('.select2').select2({
     allowClear: false,
@@ -108,6 +120,12 @@ $(document).ready(function() {
       accounts.forEach(function(account) {
         $('#accounts_id').append('<option value="' + account.id + '">' + account.accounts_name + ' (' + account.sector_name + ')</option>');
       });
+
+      // Populate fields if updating
+      if (isUpdate) {
+        $('#accounts_id').val('{{ $receive->accounts_id }}').trigger('change');
+        $('#pay_mode').val('{{ $receive->pay_mode }}').trigger('change');
+      }
     },
     error: function(xhr) {
       console.error('Error fetching accounts:', xhr);
@@ -132,6 +150,7 @@ $(document).ready(function() {
         type: 'POST',
         data: {
           invoice_no: invoice_no,
+          receive_id: isUpdate ? '{{ $receive->id }}' : '',
           _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
@@ -191,19 +210,22 @@ $(document).ready(function() {
     $('#saveReceiveBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
 
     $.ajax({
-      url: "{{ route('receives.store') }}",
+      url: isUpdate ? "{{ route('receives.update', $receive->id) }}" : "{{ route('receives.store') }}",
       type: 'POST',
-      data: receiveData,
+      data: {
+        ...receiveData,
+        _method: isUpdate ? 'PUT' : 'POST'
+      },
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
-        toastr.success('Receive created successfully!');
+        toastr.success(isUpdate ? 'Receive updated successfully!' : 'Receive created successfully!');
         $('#modal-default1').modal('hide');
         $('#receiveView').DataTable().ajax.reload();
 
         // Reset form
-        $('#receiveInsertForm')[0].reset();
+        $('#receiveUpdateForm')[0].reset();
         $('.select2').val(null).trigger('change');
       },
       error: function(xhr) {
@@ -237,7 +259,7 @@ $(document).ready(function() {
   });
 
   // Form input validation on keyup
-  $('#receiveInsertForm input, #receiveInsertForm select, #receiveInsertForm textarea').on('keyup change', function() {
+  $('#receiveUpdateForm input, #receiveUpdateForm select, #receiveUpdateForm textarea').on('keyup change', function() {
     const field = $(this);
     const value = field.val().trim();
 

@@ -80,7 +80,24 @@
                 </div>
                 <!-- /.col -->
                 
+                <div class="col-md-3">
+                  <a href="{{ route('paymentView') }}" class="card card-primary">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <span class="material-icons">local_offer</span> Payment View</h3>
 
+                      <!-- /.card-tools -->
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                      Total Active Package 
+                    </div>
+                    <!-- /.card-body -->
+                  </a>
+
+                </div>
+
+                <!-- /.col -->
               </div>
               <!-- /.row -->
 

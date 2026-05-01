@@ -17,7 +17,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0"> Receive View</h1>
+              <h1 class="m-0"> Receive View Last 100 Entrys</h1>
 
             </div><!-- /.col -->
             <div class="col-sm-6">
@@ -90,7 +90,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <p>Are you sure you want to delete the Receive "<strong id="deleteReceiveName"></strong>"?</p>
+            <p>Are you sure you want to delete the Receive Invoice"<strong id="deleteReceiveName"></strong>"?</p>
             <!-- <p class="text-danger">This action cannot be undone.</p> -->
           </div>
           <div class="modal-footer">
@@ -143,11 +143,60 @@
     }]
   });
 
+  let currentModalId = null;
+
+  // Handle edit button click
+  $('#receiveView').on('click', '.edit-btn', function() {
+    const id = $(this).data('id');
+    currentModalId = id;
+    $('#modal-default1').modal('show');
+  });
+
+  // Handle delete button click
+  $('#receiveView').on('click', '.delete-btn', function() {
+    const id = $(this).data('id');
+    const row = $(this).closest('tr');
+    const invoiceNo = row.find('td:nth-child(2)').text(); // Assuming invoice_no is in second column
+    confirmDelete(id, invoiceNo);
+  });
+
   
+  // Function to show delete confirmation
+  window.confirmDelete = function(id, name) {
+    $('#deleteReceiveName').text(name);
+    $('#deleteModal').modal('show');
+    $('#confirmDelete').data('id', id);
+  };
+
+  // Handle delete confirmation
+  $('#confirmDelete').click(function() {
+    const id = $(this).data('id');
+    $.ajax({
+      url: "{{ route('receives.destroy', ':id') }}".replace(':id', id),
+      type: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        toastr.success('Receive deleted successfully!');
+        $('#deleteModal').modal('hide');
+        $('#receiveView').DataTable().ajax.reload();
+      },
+      error: function(xhr) {
+        let errorMessage = 'An error occurred while deleting the receive.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        toastr.error(errorMessage);
+      }
+    });
+  });
+
   //Receive Add
       $('#modal-default1').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var ID = button.data('whatever') // Extract info from data-* attributes
+        var button = event.relatedTarget ? $(event.relatedTarget) : null; // Button that triggered the modal
+        var ID = button && button.data('whatever') ? button.data('whatever') : currentModalId; // Use currentModalId if no button
+        currentModalId = null; // Reset
         var modal = $(this);
         var dataString = 'id=' + ID;
         modal.find('.dash').html('');
@@ -187,7 +236,7 @@
           }
         });
 
-      }else if (ID !='Receive'){
+      }else if (ID && ID !='Receive'){
 
           modal.find('.modal-title').text('Receive Update');
           $.ajax({
@@ -206,7 +255,8 @@
           }
         });
         }else{
-          alert(400);
+          alert('No ID provided '+ID);
+          // alert('Invalid ID');
         }
 
       });

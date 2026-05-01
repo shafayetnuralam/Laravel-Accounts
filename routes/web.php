@@ -63,6 +63,11 @@ Route::get('receiveView',[UserController:: class,'receiveView'])
 ->name('receiveView')
 ->middleware(["auth",'LsValidUser:admin']); // receive view page with middleware
 
+// paymentView
+Route::get('paymentView',[UserController:: class,'paymentView'])
+->name('paymentView')
+->middleware(["auth",'LsValidUser:admin']); // payment view page with middleware
+
 // Route::middleware(['ok-user'])->group(function () {
 //     Route::get('dashboard',[UserController:: class,'deshboradPage'])
 //     ->name('dashboard'); // dashboard page with middleware
@@ -94,7 +99,8 @@ Route::middleware(['auth','LsValidUser:admin'])->group(function () {
     Route::post('receives', [ReceiveController::class, 'store'])->name('receives.store');
     Route::put('receives/{id}', [ReceiveController::class, 'update'])->name('receives.update');
     Route::delete('receives/{id}', [ReceiveController::class, 'destroy'])->name('receives.destroy');
-        Route::get('receives/last-invoice', [ReceiveController::class, 'getLastInvoice'])->name('receives.getLastInvoice');
+    Route::get('receives/last-invoice', [ReceiveController::class, 'getLastInvoice'])->name('receives.getLastInvoice');
+
 });
 
 Route::get('logout',[UserController:: class,'Logout'])->name('logout'); // logout page

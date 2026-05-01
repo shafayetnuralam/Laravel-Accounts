@@ -46,6 +46,7 @@ class ReceiveController extends Controller
             $columnIndex = $request->order[0]['column'];
             $direction = $request->order[0]['dir'];
             
+
             if (isset($columns[$columnIndex]) && $columnIndex != 0 && $columnIndex != 9) {
                 $query->orderBy($columns[$columnIndex], $direction);
             }
@@ -57,7 +58,8 @@ class ReceiveController extends Controller
         if ($request->length != -1) {
             $query->skip($request->start)->take($request->length);
         }
-
+        // Limit coluums
+         $query->limit(100);
         $receives = $query->get();
 
         // Format data for DataTable
@@ -88,7 +90,7 @@ class ReceiveController extends Controller
                 htmlspecialchars($receive->amount),
                 $remarks,
               
-                "<a href='#' class='btn btn-sm btn-info edit-btn' data-id='{$receive->id}'>Edit</a>
+                "<a href='#' class='btn btn-sm btn-info edit-btn' data-id='{$receive->id}'>Edit {$receive->id}</a>
                  <a href='#' class='btn btn-sm btn-danger delete-btn' data-id='{$receive->id}'>Delete</a>"
             ];
         }
@@ -114,7 +116,8 @@ class ReceiveController extends Controller
      */
     public function edit($id)
     {
-        $Receive = Receive::findOrFail($id);
+        $receive = Receive::findOrFail($id);
+        // return view('modalReceivesUpdate', $id);
         return view('modalReceivesUpdate', compact('receive'));
     }
 
@@ -175,8 +178,8 @@ class ReceiveController extends Controller
     public function checkDuplicate(Request $request)
     {
         $exists = Receive::where('invoice_no', $request->invoice_no)
-                        ->when($request->has('exclude_id'), function ($query) use ($request) {
-                            return $query->where('id', '!=', $request->exclude_id);
+                        ->when($request->has('receive_id') && $request->receive_id, function ($query) use ($request) {
+                            return $query->where('id', '!=', $request->receive_id);
                         })
                         ->exists();
 
