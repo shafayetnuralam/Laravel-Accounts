@@ -110,7 +110,7 @@ $(document).ready(function() {
 
   // Fetch and populate accounts
   $.ajax({
-    url: "{{ route('accounts.index') }}",
+    url: "{{ route('accounts.receiveInfo') }}",
     type: 'GET',
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

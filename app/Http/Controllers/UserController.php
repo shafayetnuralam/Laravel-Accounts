@@ -57,6 +57,12 @@ class UserController extends Controller
                 return view('added');
         }
 
+        public function reportView(){
+
+        return view('reportView');
+        }
+
+
         
         public function accountSetupView(){
             return view('accountSetupView');
@@ -72,6 +78,11 @@ class UserController extends Controller
         }
 
         
+        public function AccountReport(){
+            return view('AccountReport');
+        }
+
+
         public function Logout(){
             Auth::logout();
             return redirect()->route('login')->with('success', 'You have been logged out');

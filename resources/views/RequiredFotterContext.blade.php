@@ -134,48 +134,20 @@ function formatOutput (optionElement) {
     })
     //Money Euro
     $('[data-mask]').inputmask()
+// Start Date
+// Start Date
+$('#start_date').datetimepicker({
+    format: 'DD/MM/YYYY',
+    minDate: moment('{{ $appStartDate }}', 'DD/MM/YYYY'),
+    maxDate: moment('{{ $appEndDate}}', 'DD/MM/YYYY')
+});
 
-    //Date picker
-    $('#start_date').datetimepicker({
-      format: 'DD/MM/YYYY',
-      minDate:'<?php //print date("m-d-Y",strtotime($CreateDate));?>'
-    });
-
-    $('#start_date2').datetimepicker({
-      format: 'DD/MM/YYYY',
-
-    });
-    $('#start_date3').datetimepicker({
-      format: 'DD/MM/YYYY',
-
-    });
-    $('#start_date4').datetimepicker({
-      format: 'DD/MM/YYYY',
-
-    });
-    $('#end_date').datetimepicker({
-      format: 'DD/MM/YYYY',
-      maxDate:'<?php //print date("m-d-Y",strtotime($CurrentDate));?>'
-     
-    });
-    
-    $('#end_date2').datetimepicker({
-      format: 'DD/MM/YYYY',
-      maxDate:'<?php //print date("m-d-Y",strtotime($CurrentDate));?>'
-     
-    });
-    $('#end_date3').datetimepicker({
-      format: 'DD/MM/YYYY',
-      maxDate:'<?php //print date("m-d-Y",strtotime($CurrentDate));?>'
-     
-    });
-
-    $('#end_date4').datetimepicker({
-      format: 'DD/MM/YYYY',
-      maxDate:'<?php //print date("m-d-Y",strtotime($CurrentDate));?>'
-     
-    });
-
+// End Date
+$('#end_date').datetimepicker({
+     format: 'DD/MM/YYYY',
+    minDate: moment('{{ $appStartDate }}', 'DD/MM/YYYY'),
+    maxDate: moment('{{ $appEndDate}}', 'DD/MM/YYYY')
+});
     //Date and time picker
     $('#reservationdatetime').datetimepicker({
       icons: {

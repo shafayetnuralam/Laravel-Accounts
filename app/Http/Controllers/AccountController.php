@@ -11,12 +11,39 @@ class AccountController extends Controller
     /**
      * Display a listing of accounts (JSON for AJAX)
      */
-    public function index()
+    public function allAccountsInfo()
     {
-        $accounts = Account::select('id', 'accounts_name', 'sector_name')->orderBy('accounts_name', 'ASC')->get();
+        $accounts = Account::select('id', 'accounts_name', 'category','sector_name')
+        ->orderBy('accounts_name', 'ASC')
+        ->orderBy('sector_name', 'ASC')
+        ->orderBy('category', 'ASC')
+        ->get();
         return response()->json($accounts);
     }
 
+        public function receiveInfo()
+    {
+        $accounts = Account::select('id', 'accounts_name', 'category','sector_name')
+        ->where('Status','Active')
+        ->whereIn('category', ['Both', 'Receive'])
+        ->orderBy('accounts_name', 'ASC')
+        ->orderBy('sector_name', 'ASC')
+        ->orderBy('category', 'ASC')
+        ->get();
+        return response()->json($accounts);
+    }
+
+      public function paymentInfo()
+    {
+        $accounts = Account::select('id', 'accounts_name', 'category','sector_name')
+        ->where('Status','Active')
+        ->whereIn('category', ['Both', 'Payment'])
+        ->orderBy('accounts_name', 'ASC')
+        ->orderBy('sector_name', 'ASC')
+        ->orderBy('category', 'ASC')
+        ->get();
+        return response()->json($accounts);
+    }
     /**
      * Handle DataTable AJAX requests for accounts list
      */

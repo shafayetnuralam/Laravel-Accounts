@@ -98,7 +98,7 @@ $(document).ready(function() {
 
   // Fetch and populate accounts
   $.ajax({
-    url: "{{ route('accounts.index') }}",
+    url: "{{ route('accounts.paymentInfo') }}",
     type: 'GET',
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -106,7 +106,7 @@ $(document).ready(function() {
     success: function(response) {
       const accounts = response.data || response; // Adjust based on API response structure
       accounts.forEach(function(account) {
-        $('#accounts_id').append('<option value="' + account.id + '">' + account.accounts_name + ' (' + account.sector_name + ')</option>');
+        $('#accounts_id').append('<option value="' + account.id + '">' + account.accounts_name + ' - ' + account.sector_name + ' (' + account.category + ')</option>');
       });
     },
     error: function(xhr) {

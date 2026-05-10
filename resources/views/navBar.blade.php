@@ -16,6 +16,7 @@
       <ul class="navbar-nav">
         <li class="nav-item">
           <a href="{{ route('added') }}" class="nav-link">Added Menu</a>        </li>
+          <a href="{{ route('reportView') }}" class="nav-link">Report Menu</a>        </li>
         
       </ul>
 
