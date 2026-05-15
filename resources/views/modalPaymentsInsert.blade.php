@@ -7,7 +7,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label class="col-form-label" for="accounts_id">Account Info</label>
-        <select name="accounts_id" id="accounts_id" class="form-control select2" required>
+        <select name="accounts_id" id="accounts_id" class="form-control select2" onchange="acBalance();" required>
           <option value="">Select Account info</option>
           <!-- Accounts will be loaded via AJAX -->
         </select>
@@ -16,6 +16,24 @@
         </div>
       </div>
     </div>
+
+    
+      <div class="col-md-6">
+        <div class="form-group">
+             <label class="col-form-label" for="amount">Account Balance </label>
+         
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="credit_limit_html" style="color:red;" ></span>
+            </div>
+           <input type="text" class="form-control" id="accountsBalance" name="accountsBalance"
+                 readonly>
+          </div>
+        </div>
+      </div>
+      </div>
+
+    <div class="row">
 
       <div class="col-md-6">
         <div class="form-group">
@@ -32,9 +50,7 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
+    
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-form-label" for="amount">Amount</label>
@@ -45,7 +61,9 @@
           </div>
         </div>
       </div>
+  </div>
 
+    <div class="row">
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-form-label" for="entry_date">Entry Date</label>
@@ -55,13 +73,11 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
+  
       <div class="col-md-6">
         <div class="form-group">
           <label class="col-form-label" for="invoice_no">Invoice No</label>
-          <input type="text" class="form-control" id="invoice_no" name="invoice_no"
+          <input type="text" readonly class="form-control" id="invoice_no" name="invoice_no"
                  placeholder="Enter Invoice Number">
         </div>
       </div>
@@ -100,9 +116,9 @@ $(document).ready(function() {
   $.ajax({
     url: "{{ route('accounts.paymentInfo') }}",
     type: 'GET',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    },
+    // headers: {
+    //   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    // },
     success: function(response) {
       const accounts = response.data || response; // Adjust based on API response structure
       accounts.forEach(function(account) {
@@ -255,4 +271,31 @@ $(document).ready(function() {
     }
   });
 });
+
+
+function acBalance() {
+  var id = document.getElementById("accounts_id").value;
+
+  console.log("Selected:", id); // debug
+
+$.ajax({
+  url: "{{ route('accounts.accountsBalance', ':id') }}".replace(':id', id),
+  type: 'GET',
+  data: {
+    id: id
+  },
+  success: function(response) {
+
+    // console.log(response.balance); // 100
+
+    $('#credit_limit_html').html("Credit Limit: " + response.credit_limit);
+     document.getElementById('accountsBalance').value = response.balance;
+  },
+  error: function(xhr) {
+    console.error(xhr);
+  }
+});
+  
+}
+
 </script>

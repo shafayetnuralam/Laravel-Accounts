@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\Payment;
+use App\Models\Receive;
 
 class AccountController extends Controller
 {
@@ -245,5 +247,35 @@ class AccountController extends Controller
             'success' => true,
             'message' => 'Account deleted successfully'
         ]);
+    }
+
+    //accounts Balance
+    public function accountsBalance($id)
+    {
+       $accounts_id = $id;
+        
+        $openiing_payments = Payment::
+            where('accounts_id', $accounts_id)
+            ->get();
+        $total_openiing_payments = $openiing_payments->sum('amount');
+
+
+        $openiing_receives = Receive::
+            where('accounts_id', $accounts_id)
+            ->get();
+        $total_openiing_receives = $openiing_receives->sum('amount');
+
+        $account = Account::select('id', 'accounts_name', 'mobile_no', 'credit_limit','opening_balance')
+            ->where('id', $accounts_id)
+            ->first();
+
+        $credit_limit=$account->credit_limit;
+        $accountBalance = (($account->opening_balance) + ($total_openiing_receives - $total_openiing_payments));
+
+
+    return response()->json([
+        'balance' => $accountBalance,
+        'credit_limit' => $credit_limit
+    ]);
     }
 }

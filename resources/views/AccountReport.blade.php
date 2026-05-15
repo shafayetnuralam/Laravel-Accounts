@@ -169,11 +169,11 @@ $(document).ready(function() {
 
   // Fetch and populate accounts
   $.ajax({
-    url: "{{ route('accounts.paymentInfo') }}",
+    url: "{{ route('accounts.allAccountsInfo') }}",
     type: 'GET',
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    },
+    // headers: {
+    //   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    // },
     success: function(response) {
       const accounts = response.data || response; // Adjust based on API response structure
       accounts.forEach(function(account) {

@@ -72,7 +72,6 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     Route::get('added', [UserController::class, 'addedPage'])->name('added');
     // Account routes
     Route::get('accountSetupView', [UserController::class, 'accountSetupView'])->name('accountSetupView');
-    Route::get('accounts', [AccountController::class, 'allAccountsInfo'])->name('accounts.allAccountsInfo');
     Route::post('accounts/data', [AccountController::class, 'getAccountsData'])->name('accounts.data');
     Route::post('accounts/check-duplicate', [AccountController::class, 'checkDuplicate'])->name('accounts.check-duplicate');
     Route::get('accounts/create', [AccountController::class, 'create'])->name('accounts.create');
@@ -81,10 +80,14 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     Route::put('accounts/{id}', [AccountController::class, 'update'])->name('accounts.update');
     Route::delete('accounts/{id}', [AccountController::class, 'destroy'])->name('accounts.destroy');
 
+    //accounts info
+    Route::get('accounts/allAccountsInfo', [AccountController::class, 'allAccountsInfo'])->name('accounts.allAccountsInfo');
+    Route::get('accounts/receiveInfo', [AccountController::class, 'receiveInfo'])->name('accounts.receiveInfo');
+    Route::get('accounts/paymentInfo', [AccountController::class, 'paymentInfo'])->name('accounts.paymentInfo');
+    Route::get('accounts/accountsBalance/{id}', [AccountController::class, 'accountsBalance'])->name('accounts.accountsBalance');
     // Receive routes
     Route::get('receiveView', [UserController::class, 'receiveView'])->name('receiveView');
     Route::post('receives/data', [ReceiveController::class, 'getReceivesData'])->name('receives.data');
-    Route::get('accounts', [AccountController::class, 'receiveInfo'])->name('accounts.receiveInfo');
     Route::post('receives/check-duplicate', [ReceiveController::class, 'checkDuplicate'])->name('receives.check-duplicate');
     Route::get('receives/create', [ReceiveController::class, 'create'])->name('receives.create');
     Route::post('receives', [ReceiveController::class, 'store'])->name('receives.store');
@@ -96,7 +99,8 @@ Route::middleware(['auth', 'LsValidUser:admin'])->group(function () {
     // Payment routes
     Route::get('paymentView', [UserController::class, 'paymentView'])->name('paymentView');
     Route::post('payments/data', [PaymentController::class, 'getPaymentsData'])->name('payments.data');
-    Route::get('accounts', [AccountController::class, 'paymentInfo'])->name('accounts.paymentInfo');
+
+    
     Route::post('payments/check-duplicate', [PaymentController::class, 'checkDuplicate'])->name('payments.check-duplicate');
     Route::get('payments/create', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');

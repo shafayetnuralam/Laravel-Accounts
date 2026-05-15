@@ -1,7 +1,7 @@
 
 <html>
 <head>
-<title>Challan Report >> </title>
+<title>Challan Report >> {{ $type }}</title>
 <link rel="stylesheet" href="dist/css/bootstrap.min.css">
 <script src="dist/js/b1.5.1jquery.min.js"></script>
 <!-- start: Favicon -->
@@ -62,7 +62,7 @@ $("#table tr").toggle(function(){
 	<th style="text-align:center; font-size:18px;"> Accounts Summary Report ({{ $type }})</th>
 </tr>
 
-@if ($type == 'Summary Wise')
+@if ($type == 'Summary Wise' && $accounts_id != 'All')
 
 
 
@@ -89,9 +89,14 @@ $("#table tr").toggle(function(){
         <th style="text-align:center;">Payment Amount</th>
         <th style="text-align:center;">Balance</th>
     </tr>
+<tr>
+        <th style="text-align:right;" colspan="6">{{  \Carbon\Carbon::parse($previous_date)->format('d/m/Y')}} Previous Balance</th>
+        <th style="text-align:right;">{{ number_format($previous_balance,2) }}</th>
 
+
+</tr>
     @php
-        $balance = 0;
+        $balance = (0+ $previous_balance);
         $sl =1;
         $totalReceive =0;
         $totalPayment=0;
@@ -151,9 +156,9 @@ $("#table tr").toggle(function(){
 
     <th style="text-align:right;" colspan="4">  Total Amount</th>
  
-    <th style="text-align:right;"> {{ $totalReceive  }}</th>
-    <th style="text-align:right;"> {{ $totalPayment  }}</th>
-    <th style="text-align:right;"> {{ $balance  }}</th>
+    <th style="text-align:right;"> {{ number_format($totalReceive,2)  }}</th>
+    <th style="text-align:right;"> {{ number_format($totalPayment,2)  }}</th>
+    <th style="text-align:right;"> {{ number_format( $balance,2)  }}</th>
    
 </tr>
 
