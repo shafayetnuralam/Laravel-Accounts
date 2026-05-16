@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\ResponseController;
 use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Payment;
 use App\Models\Receive;
 
-class AccountController extends Controller
+
+class AccountController extends ResponseController
 {
     /**
      * Display a listing of accounts (JSON for AJAX)
@@ -180,10 +181,7 @@ class AccountController extends Controller
 
         Account::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Account created successfully'
-        ]);
+        return $this->sendResponse(null, 'Account created successfully');
     }
 
     /**
@@ -214,10 +212,7 @@ class AccountController extends Controller
 
         $account->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Account updated successfully'
-        ]);
+        return $this->sendResponse(null, 'Account updated successfully');
     }
 
     /**
@@ -242,11 +237,7 @@ class AccountController extends Controller
     {
         $account = Account::findOrFail($id);
         $account->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Account deleted successfully'
-        ]);
+        return $this->sendResponse(null, 'Account deleted successfully');
     }
 
     //accounts Balance

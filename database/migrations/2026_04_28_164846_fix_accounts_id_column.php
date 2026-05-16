@@ -8,16 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('account_receive', function (Blueprint $table) {
-            $table->unsignedBigInteger('accounts_id')->change();
-        });
+    Schema::table('account_receive', function (Blueprint $table) {
 
-        Schema::table('account_receive', function (Blueprint $table) {
-            $table->foreign('accounts_id')
-                  ->references('id')
-                  ->on('accounts_setup')
-                  ->onDelete('cascade');
-        });
+    // Drop old foreign key first
+    $table->dropForeign(['accounts_id']);
+
+    // Modify column if needed
+    $table->unsignedBigInteger('accounts_id')->change();
+
+    // Re-add foreign key
+    $table->foreign('accounts_id')
+          ->references('id')
+          ->on('accounts_setup')
+          ->onDelete('cascade');
+});
     }
 
     public function down(): void

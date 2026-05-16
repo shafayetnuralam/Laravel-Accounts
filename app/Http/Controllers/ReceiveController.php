@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\ResponseController;
 use App\Models\Receive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-class ReceiveController extends Controller
+
+class ReceiveController extends ResponseController
 {
     //
      public function getReceivesData(Request $request)
@@ -150,10 +151,7 @@ class ReceiveController extends Controller
 
         Receive::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Receive created successfully'
-        ]);
+        return $this->sendResponse(null, 'Receive created successfully');
     }
 
 
@@ -189,10 +187,7 @@ class ReceiveController extends Controller
 
         $receive->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Receive updated successfully'
-        ]);
+        return $this->sendResponse(null, 'Receive updated successfully');
     }
 
 
@@ -202,6 +197,8 @@ class ReceiveController extends Controller
         $lastReceive = Receive::orderBy('id', 'desc')->first();
         $lastInvoiceNo = $lastReceive ? $lastReceive->invoice_no : 0;
         $nextInvoiceNo = $lastInvoiceNo ? $lastInvoiceNo + 1 : 1;
+
+
         return response()->json([
             'last_invoice_no' => $nextInvoiceNo
         ]);
@@ -213,9 +210,6 @@ class ReceiveController extends Controller
         $receive = Receive::findOrFail($id);
         $receive->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Receive deleted successfully'
-        ]);
+        return $this->sendResponse(null, 'Receive deleted successfully');
     }
 }

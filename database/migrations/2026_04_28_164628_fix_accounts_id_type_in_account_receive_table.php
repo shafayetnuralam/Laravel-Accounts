@@ -6,26 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-     Schema::table('account_receive', function (Blueprint $table) {
-    $table->foreign('accounts_id')
-          ->references('id')
-          ->on('accounts_setup')
-          ->onDelete('cascade');
-});
+        Schema::table('account_receive', function (Blueprint $table) {
+
+            // Drop old foreign key first
+            $table->dropForeign(['accounts_id']);
+
+            // Modify column if needed
+            $table->unsignedBigInteger('accounts_id')->change();
+
+            // Re-add foreign key
+            $table->foreign('accounts_id')
+                ->references('id')
+                ->on('accounts_setup')
+                ->onDelete('cascade');
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('account_receive', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

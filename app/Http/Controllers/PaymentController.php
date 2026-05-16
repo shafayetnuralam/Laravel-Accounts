@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Controllers\ResponseController;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-class PaymentController extends Controller
+class PaymentController extends ResponseController
 {
     //
 
@@ -151,10 +152,8 @@ class PaymentController extends Controller
 
         Payment::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment created successfully'
-        ]);
+        return $this->sendResponse(null, 'Payment created successfully');
+
     }
 
 
@@ -188,10 +187,8 @@ class PaymentController extends Controller
 
         $payment->update($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment updated successfully'
-        ]);
+
+        return $this->sendResponse(null, 'Payment updated successfully');
     }
 
 
@@ -214,10 +211,7 @@ class PaymentController extends Controller
         $payment = Payment::findOrFail($id);
         $payment->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment deleted successfully'
-        ]);
+        return $this->sendResponse(null, 'Payment deleted successfully');
     }
 
 
